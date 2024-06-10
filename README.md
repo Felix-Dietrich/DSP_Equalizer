@@ -1,7 +1,12 @@
 # DSP_Equalizer
 
-# DSP audio Filter
 
+## compile code 
+### on mac
+clang -o DSP DSP.c
+
+
+## Ziele
 Filtervorgabe als min/max Dämpfung in bestimmtem Frequenzbereich.
 
 Zeitmessung auf intel und Mikrocontroller
