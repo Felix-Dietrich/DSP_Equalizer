@@ -16,16 +16,11 @@ void update_spectrum()
 
 void filterfunction(uint16_t audio_data[], uint16_t size)
 {
-    static buffer_pcm_t data_in;
+    buffer_pcm_t data_in;
     data_in.samplerate = 44100;
     data_in.size = size;
-    for(int i = 0; i< size;i++)
-    {
-        data_in.data[i] = audio_data[i];
-    }
-    static buffer_pcm_t data_out;
-
+    memcpy(data_in.data, audio_data, size * sizeof(uint16_t));
+    buffer_pcm_t data_out; 
     equalizer(&data_in,&data_out,0.5);
-
-    audio_data = data_out.data;
+    memcpy(audio_data, data_out.data, size * sizeof(uint16_t));
 }
