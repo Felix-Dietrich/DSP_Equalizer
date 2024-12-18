@@ -9,7 +9,7 @@ clang -o DSP DSP.c
 ## Ziele
 Filtervorgabe als min/max Dämpfung in bestimmtem Frequenzbereich.
 
-Zeitmessung auf intel und Mikrocontroller
+Zeitmessung auf Mac m3 und Mikrocontroller
 Anforderung 44100Hz audio in Echtzeit verarbeiten auf Raspberry Pi pico.
 
 - 500Hz +6..9dB
@@ -19,10 +19,10 @@ Anforderung 44100Hz audio in Echtzeit verarbeiten auf Raspberry Pi pico.
 - 10-20 Khz +6dB
 
 Filter als C-Code implementiert
-FIR-Filter mit Faltung 
-FIR-Filter mit FFT
-IIR-Filter
-Filterbank-Filter
+- FIR-Filter mit Faltung 
+- FIR-Filter mit FFT
+- IIR-Filter biquad Filter
+- DWT-Filter als Filterbank
 
 ## Main
 - liest und schreibt raw audio file
@@ -36,12 +36,18 @@ Filterbank-Filter
 
 
 ## Visualizer in python
+Bedienung:
+* audiodatei wählen
+* spektrum vorgeben
+* filtertyp wählen
+
+
 Auswertung:
-*Prozesszeit intel
-*Prozesszeit M0
-*THD sinus 1K
-*genaues Spektrum FFT von Impulsantwort mit zero padding
+* Prozesszeit intel
+* Prozesszeit M0
+* THD sinus 1K
+* genaues Spektrum FFT von Impulsantwort mit zero padding
 
 ## Weitere:
-- Analyse bittiefe
-- Analyse floating
+- welchen Einfluss auf die Qualität hat die Bittiefe
+- Kann mit floating point eine bessere Performance erreicht werden?
