@@ -12,11 +12,13 @@ Filtervorgabe als min/max Dämpfung in bestimmtem Frequenzbereich.
 Zeitmessung auf Mac m3 und Mikrocontroller
 Anforderung 44100Hz audio in Echtzeit verarbeiten auf Raspberry Pi pico.
 
-- 500Hz +6..9dB
-- 500-1K +6dB
-- 1K-5K +0dB
-- 5-10kHz +3dB
-- 10-20 Khz +6dB
+
+die Frequenzkanäle werden folgendermassen gewählt: 
+
+25*(2^(n/2))
+n= 0 ... 19
+
+
 
 Filter als C-Code implementiert
 - FIR-Filter mit Faltung 
