@@ -6,6 +6,7 @@ from pydub.playback import play
 import numpy as np
 import threading
 import pyaudio
+import matplotlib.pyplot as plt
 
 
 # Bibliothek laden
@@ -35,30 +36,44 @@ def load_audio_to_ctypes(filepath):
 
 
 
-
-   
-
 def  hello_world():
     lib.hello_world()
+
+
+
+
+SAMPLES_PER_BUFFER = 4000
+   
+
+
 
 hello_world()
 filepath = "./example.wav"
 audiodata, size, samplerate = load_audio_to_ctypes(filepath)
-for i in range(0,size-2000,2000):
-    slice_data = audiodata[i:i+2000]
+lib.update_spectrum()
+# Audio stream initialisieren (pyaudio)
+p = pyaudio.PyAudio()
+stream = p.open(format=pyaudio.paInt16,
+                channels=1,
+                rate=samplerate,
+                output=True,
+                frames_per_buffer=SAMPLES_PER_BUFFER)  # Puffergröße auf die Größe eines Slices setzen
+
+for i in range(0,size-SAMPLES_PER_BUFFER,SAMPLES_PER_BUFFER):
+    slice_data = audiodata[i:i+SAMPLES_PER_BUFFER]
     SliceArrayType = ctypes.c_int16 * len(slice_data)
-    #lib.filterfunction(SliceArrayType(*slice_data),2000)
+    slice_array = SliceArrayType(*slice_data)
+    lib.filterfunction(slice_array,SAMPLES_PER_BUFFER)
 
      # Umwandeln der verarbeiteten Daten in ein AudioSegment
     # Pydub erwartet die Audiodaten als Bytes, daher müssen wir sie in ein passendes Format bringen
-    np_data = np.array(slice_data, dtype=np.int16)
-    audio_segment = AudioSegment(
-        np_data.tobytes(), 
-        frame_rate=samplerate,
-        sample_width=2,  # 16-bit PCM
-        channels=1  # Mono
-    )
+    np_data = np.array(slice_array, dtype=np.int16)
+    audio_segment = np_data.tobytes()
+    # Audio-Daten streamen
+    stream.write(audio_segment)
+    #if i == 40*2000:
+     #   plt.plot(np_data)
+      #  plt.show()
+
     
-    # Das Audio-Slice abspielen
-    play(audio_segment)
 
