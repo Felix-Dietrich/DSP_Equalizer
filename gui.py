@@ -7,6 +7,7 @@ import numpy as np
 import threading
 import pyaudio
 import matplotlib.pyplot as plt
+import tkinter as tk
 
 
 # Bibliothek laden
@@ -58,6 +59,25 @@ stream = p.open(format=pyaudio.paInt16,
                 rate=samplerate,
                 output=True,
                 frames_per_buffer=SAMPLES_PER_BUFFER)  # Puffergröße auf die Größe eines Slices setzen
+
+
+
+
+window = tk.Tk()
+window.title("Simple Tkinter GUI")
+
+# Add a label with a title
+title_label = tk.Label(text="Welcome to the Simple GUI!")
+title_label.pack()
+
+slider = tk.Scale(from_=100, to=0, orient='vertical')
+slider.pack()
+window.update()
+# Run the GUI event loop
+window.mainloop()
+
+
+
 
 for i in range(0,size-SAMPLES_PER_BUFFER,SAMPLES_PER_BUFFER):
     slice_data = audiodata[i:i+SAMPLES_PER_BUFFER]
