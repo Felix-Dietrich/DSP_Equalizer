@@ -39,7 +39,7 @@ def update_plot():
     spectrum = [(0-slider.get()) for slider in sliders]
     ax.clear()
     ax.bar(range(1, 21), spectrum, color='blue')
-    ax.set_ylim(-20, 20)
+    ax.set_ylim(-12, 12)
     canvas.draw()
 
 
@@ -93,6 +93,10 @@ def audio_processing():
         #  plt.show()
 
 
+def reset_sliders():
+    for slider in sliders:
+        slider.set(0)
+
 # Main window
 root = tk.Tk()
 root.title("Equalizer GUI")
@@ -121,6 +125,8 @@ for i in range(20):
     label = ttk.Label(slider_frame, text=f"{25*(2**(i/2)):.0f}")
     label.grid(row=1, column=i+1, padx=2) 
     sliders.append(slider)
+button = ttk.Button(root,text="reset", command=reset_sliders)
+button.pack()
 
 
 # Plot area

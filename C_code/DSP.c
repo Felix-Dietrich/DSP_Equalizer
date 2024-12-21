@@ -21,6 +21,6 @@ void filterfunction(uint16_t audio_data[], uint16_t size)
     data_in.size = size;
     memcpy(data_in.data, audio_data, size * sizeof(uint16_t));
     buffer_pcm_t data_out; 
-    equalizer(&data_in,&data_out,0.5);
+    equalizer(&data_in,&data_out,1);
     memcpy(audio_data, data_out.data, size * sizeof(uint16_t));
 }
