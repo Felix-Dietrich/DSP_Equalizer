@@ -8,6 +8,8 @@ import threading
 import pyaudio
 import matplotlib.pyplot as plt
 import tkinter as tk
+from tkinter import ttk, filedialog
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 # Bibliothek laden
@@ -63,18 +65,60 @@ stream = p.open(format=pyaudio.paInt16,
 
 
 
-window = tk.Tk()
-window.title("Simple Tkinter GUI")
 
-# Add a label with a title
-title_label = tk.Label(text="Welcome to the Simple GUI!")
-title_label.pack()
+def open_file():
+    file_path = filedialog.askopenfilename(filetypes=[("Audio Files", "*.wav *.mp3")])
+    if file_path:
+        file_label.config(text=f"Selected file: {file_path}")
 
-slider = tk.Scale(from_=100, to=0, orient='vertical')
-slider.pack()
-window.update()
-# Run the GUI event loop
-window.mainloop()
+def update_plot():
+    spectrum = [(0-slider.get()) for slider in sliders]
+    ax.clear()
+    ax.bar(range(1, 21), spectrum, color='blue')
+    ax.set_ylim(-20, 20)
+    canvas.draw()
+
+# Main window
+root = tk.Tk()
+root.title("Equalizer GUI")
+
+# File selection
+file_frame = ttk.Frame(root)
+file_frame.pack(pady=10)
+file_button = ttk.Button(file_frame, text="Choose File", command=open_file)
+file_button.pack(side=tk.LEFT, padx=5)
+file_label = ttk.Label(file_frame, text="No file selected")
+file_label.pack(side=tk.LEFT)
+
+# Equalizer sliders
+slider_frame = ttk.Frame(root)
+slider_frame.pack(pady=20)
+label = ttk.Label(slider_frame, text="")
+label.grid(row=0, column=0, padx=2) 
+
+label = ttk.Label(slider_frame, text="freq(HZ)")
+label.grid(row=1, column=0, padx=2) 
+sliders = []
+for i in range(20):
+    slider = ttk.Scale(slider_frame, from_=-20, to=20, orient='vertical', command=lambda e: update_plot())
+    slider.grid(row=0, column=i+1, padx=2)  # Place slider in a grid
+   # Create the label below the slider
+    label = ttk.Label(slider_frame, text=f"{25*(2**(i/2)):.0f}")
+    label.grid(row=1, column=i+1, padx=2) 
+    sliders.append(slider)
+
+
+# Plot area
+fig, ax = plt.subplots(figsize=(5, 3))
+ax.set_title("Equalizer Spectrum")
+ax.set_xlabel("Frequency Band")
+ax.set_ylabel("Gain")
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas_widget = canvas.get_tk_widget()
+canvas_widget.pack()
+
+# Run the GUI
+root.mainloop()
 
 
 
