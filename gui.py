@@ -18,13 +18,17 @@ lib = ctypes.CDLL("./C_code/library.so")
 lib.filterfunction.argtypes = [ctypes.POINTER(ctypes.c_int16), ctypes.c_size_t]
 lib.filterfunction.restype = None
 
+lib.update_spectrum.argtypes = [ctypes.POINTER(ctypes.c_float)]
+
 
 def  hello_world():
     lib.hello_world()
 
 
-def update_spectrum():
-    lib.update_spectrum()
+def update_spectrum(spectrum):
+    SpectrumArrayType = ctypes.c_float * len(spectrum)
+    spectrum_array = SpectrumArrayType(*spectrum)
+    lib.update_spectrum(spectrum_array)
 
 def open_file():
     file_path = filedialog.askopenfilename(filetypes=[("Audio Files", "*.wav *.mp3")])
@@ -37,7 +41,7 @@ def update_plot():
     ax.bar(range(1, 21), spectrum, color='blue')
     ax.set_ylim(-20, 20)
     canvas.draw()
-    
+
 
 def load_audio_to_ctypes(filepath):
     # Load the audio file using pydub
@@ -63,7 +67,7 @@ def audio_processing():
     hello_world()
     filepath = "./example.wav"
     audiodata, size, samplerate = load_audio_to_ctypes(filepath)
-    update_spectrum()
+    update_spectrum(np.zeros(20))
     # Audio stream initialisieren (pyaudio)
     p = pyaudio.PyAudio()
     stream = p.open(format=pyaudio.paInt16,
@@ -71,8 +75,7 @@ def audio_processing():
                     rate=samplerate,
                     output=True,
                     frames_per_buffer=SAMPLES_PER_BUFFER)  # Puffergröße auf die Größe eines Slices setzen
-
-
+    
     for i in range(0,size-SAMPLES_PER_BUFFER,SAMPLES_PER_BUFFER):
         slice_data = audiodata[i:i+SAMPLES_PER_BUFFER]
         SliceArrayType = ctypes.c_int16 * len(slice_data)
@@ -88,9 +91,6 @@ def audio_processing():
         #if i == 40*2000:
         #   plt.plot(np_data)
         #  plt.show()
-
-
-
 
 
 # Main window
@@ -115,7 +115,7 @@ label = ttk.Label(slider_frame, text="Freq(Hz)")
 label.grid(row=1, column=0, padx=2) 
 sliders = []
 for i in range(20):
-    slider = ttk.Scale(slider_frame, from_=-20, to=20, orient='vertical', command=lambda e: update_plot())
+    slider = ttk.Scale(slider_frame, from_=-12, to=12, orient='vertical', command=lambda e: update_spectrum([(0-slider.get()) for slider in sliders]))
     slider.grid(row=0, column=i+1, padx=2)  # Place slider in a grid
    # Create the label below the slider
     label = ttk.Label(slider_frame, text=f"{25*(2**(i/2)):.0f}")

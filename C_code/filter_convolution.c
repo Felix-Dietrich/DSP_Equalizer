@@ -29,8 +29,7 @@ static void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
             else
             {
                 processedData += in->data[i+y-FILTERSIZE]*filter[y];
-            }
-            
+            } 
         }
         out->data[i] = (processedData>>16)*volume; 
     }

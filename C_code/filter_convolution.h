@@ -2,7 +2,7 @@
 #define FILTER_CONVOLUTION
 
 #define SPECTRUMSIZE 20
-#define FILTERSIZE 128
+#define FILTERSIZE 2048
 #include <inttypes.h>
 
 typedef struct  
