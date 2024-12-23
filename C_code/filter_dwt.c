@@ -18,10 +18,21 @@ const float* wavelet = D2;
 typedef int16_t dwt_coefficients_t[2*DWT_LEVELS][FILTERLENGTH/2];
 
 
+//Function prototypes
+//---------------------------------
+static void decomposition(buffer_pcm_t* in, dwt_coefficients_t* coefficients);
+static void reconstruction(buffer_pcm_t* out, dwt_coefficients_t* coefficients);
+static void decompose_wavelets(int16_t in[], int16_t detail[], int16_t approx[],int size);
+static void decompose_wavelet(int16_t in[WAVELET_SIZE], int16_t* detail, int16_t* approx);
+static void reconstruct_wavelets(int16_t out[], int16_t detail[], int16_t approx[],int size);
+static void reconstruct_wavelet(int16_t out[WAVELET_SIZE], int16_t* detail, int16_t* approx);
+
+
 
 
 static void filter_dwt(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
 {
+    // #todo when input is more than filterlength, then calculate it multiple times and store the rest, append rest to next batch
     dwt_coefficients_t dwt_coefficients;
     decomposition(in, &dwt_coefficients);
     reconstruction(out,&dwt_coefficients);
@@ -117,7 +128,7 @@ static void reconstruct_wavelets(int16_t out[], int16_t detail[], int16_t approx
 {
     for(int i = 0; i < size/2; i++)
     {
-        reconstruct_wavelet(out[i*2],&detail[i],&approx[i]);
+        reconstruct_wavelet(&out[i*2],&detail[i],&approx[i]);
     }
 }
 
