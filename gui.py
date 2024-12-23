@@ -63,7 +63,7 @@ def load_audio_to_ctypes(filepath):
     return ctypes_array, len(audio_data), audio.frame_rate
 
 def audio_processing():
-    SAMPLES_PER_BUFFER = 4000
+    SAMPLES_PER_BUFFER = 1024
     hello_world()
     filepath = "./example.wav"
     audiodata, size, samplerate = load_audio_to_ctypes(filepath)
