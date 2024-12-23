@@ -6,6 +6,7 @@
 
 #define WAVELET_SIZE 2
 #define FILTERLENGTH 1024
+#define DWT_LEVELS  10
 
 const float D2[] = {1,1};
 const float D4[] = {0.6830127,1.1830127,0.3169873,-0.1830127};
@@ -14,72 +15,41 @@ const float D6[] = {0.47046721,1.14111692,0.650365,-0.19093442,-0.12083221,0.049
 
 const float* wavelet = D2;
 
-typedef struct 
-{
-    int16_t HH[FILTERLENGTH>>2];
-    int16_t HL[FILTERLENGTH>>2];
-    int16_t LHH[FILTERLENGTH>>3];
-    int16_t LHL[FILTERLENGTH>>3];
-    int16_t LLHH[FILTERLENGTH>>4];
-    int16_t LLHL[FILTERLENGTH>>4];
-    int16_t LLLHH[FILTERLENGTH>>5];
-    int16_t LLLHL[FILTERLENGTH>>5];
-    int16_t LLLLHH[FILTERLENGTH>>6];
-    int16_t LLLLHL[FILTERLENGTH>>6];
-    int16_t LLLLLHH[FILTERLENGTH>>7];
-    int16_t LLLLLHL[FILTERLENGTH>>7];
-    int16_t LLLLLLHH[FILTERLENGTH>>8];
-    int16_t LLLLLLHL[FILTERLENGTH>>8];
-    int16_t LLLLLLLHH[FILTERLENGTH>>9];
-    int16_t LLLLLLLHL[FILTERLENGTH>>9];
-    int16_t LLLLLLLLHH[FILTERLENGTH>>10];
-    int16_t LLLLLLLLHL[FILTERLENGTH>>10];
-    int16_t LLLLLLLLLH[FILTERLENGTH>>10];
-    int16_t LLLLLLLLLL[FILTERLENGTH>>10];
-}dwt_coefficients_t;
+typedef int16_t dwt_coefficients_t[2*DWT_LEVELS][FILTERLENGTH/2];
 
 
 
 
 static void filter_dwt(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
 {
-    
+    dwt_coefficients_t dwt_coefficients;
+    decomposition(in, &dwt_coefficients);
 }
 
 static void decomposition(buffer_pcm_t* in, dwt_coefficients_t* coefficients)
 {
     int size = FILTERLENGTH;
     int16_t detail[FILTERLENGTH>>1];
+    int16_t* temp_p;
+    int16_t next_in[FILTERLENGTH>>1];
     int16_t approximation[FILTERLENGTH>>1];
-    int16_t approximation2[FILTERLENGTH>>1];
+    int16_t* next_in_p = next_in;
+    int16_t* approximation_p = approximation;
+
     apply_wavelets(in, detail, approximation, size);
     size/=2;
-    apply_wavelets(detail, coefficients->HH,coefficients->HL,size);
-    apply_wavelets(approximation, detail, approximation2, size);
-    size/=2;
-    apply_wavelets(detail, coefficients->LHH,coefficients->LHL,size);
-    apply_wavelets(approximation2, detail, approximation, size);
-    size/=2;
-    apply_wavelets(detail, coefficients->LLHH,coefficients->LLHL,size);
-    apply_wavelets(approximation, detail, approximation2, size);
-    size/=2;
-    apply_wavelets(detail, coefficients->LLLHH,coefficients->LLLHL,size);
-    apply_wavelets(approximation2, detail, approximation, size);
-    size/=2;
-    apply_wavelets(detail, coefficients->LLLLHH,coefficients->LLLLHL,size);
-    apply_wavelets(approximation, detail, approximation2, size);
-    size/=2;
-    apply_wavelets(detail, coefficients->LLLLLHH,coefficients->LLLLLHL,size);
-    apply_wavelets(approximation2, detail, approximation, size);
-    size/=2;
-    apply_wavelets(detail, coefficients->LLLLLLHH,coefficients->LLLLLLHL,size);
-    apply_wavelets(approximation, detail, approximation2, size);
-    size/=2;
-    apply_wavelets(detail, coefficients->LLLLLLLHH,coefficients->LLLLLLLHL,size);
-    apply_wavelets(approximation2, detail, approximation, size);
-    size/2;
-    apply_wavelets(detail, coefficients->LLLLLLLLHH,coefficients->LLLLLLLLHL,size);
-    apply_wavelets(approximation, coefficients->LLLLLLLLLH, coefficients->LLLLLLLLLL, size);
+    for(int i = 0; i < 8;i++)
+    {
+        apply_wavelets(detail, coefficients[i],coefficients[i+1],size);
+        apply_wavelets(next_in_p, detail, approximation_p, size);
+        //swap pointers
+        temp_p = next_in_p;
+        next_in_p = approximation_p;
+        approximation_p = temp_p;
+        size/=2;
+    }
+    apply_wavelets(detail, coefficients[16],coefficients[17],size);
+    apply_wavelets(next_in_p, coefficients[18], coefficients[19], size);
 }
 
 static void reconstruction()
