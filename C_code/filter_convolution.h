@@ -5,7 +5,7 @@
 #define FILTERSIZE 2048
 #include "commons.h"
 
-static void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], uint32_t samplerate);
-static void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume);
+void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], uint32_t samplerate);
+void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume);
 
 #endif

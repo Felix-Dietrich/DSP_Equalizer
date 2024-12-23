@@ -1,5 +1,5 @@
 #include "commons.h"
-
+#include "filter_dwt.h"
 //assuming input buffer is at least big enugh to do one full conversion (2^stages)
 
 
@@ -30,7 +30,7 @@ static void reconstruct_wavelet(int16_t out[WAVELET_SIZE], int16_t* detail, int1
 
 
 
-static void filter_dwt(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
+void filter_dwt(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
 {
     // #todo when input is more than filterlength, then calculate it multiple times and store the rest, append rest to next batch
     dwt_coefficients_t dwt_coefficients;

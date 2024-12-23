@@ -8,7 +8,7 @@
 
 static int16_t filter[FILTERSIZE];
 
-static void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
+void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
 {
     static int16_t in_last[FILTERSIZE];
     int32_t processedData;
@@ -43,7 +43,7 @@ static void equalizer(buffer_pcm_t* in, buffer_pcm_t* out, float volume)
 }
 
 
-static void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], uint32_t samplerate)
+void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], uint32_t samplerate)
 {
     //clculate factor from dB
     const float start_freq_HZ = 25;

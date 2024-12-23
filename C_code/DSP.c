@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "filter_convolution.c"
+#include "filter_convolution.h"
+#include "filter_dwt.h"
 #include <string.h>
 
 
