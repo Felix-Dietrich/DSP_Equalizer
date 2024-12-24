@@ -2,7 +2,7 @@
 #define FILTER_CONVOLUTION
 
 
-#define FILTERSIZE 2048
+#define FILTERSIZE 1024
 #include "commons.h"
 
 void spectrum_to_filter(const float spectrum[SPECTRUMSIZE], uint32_t samplerate);
