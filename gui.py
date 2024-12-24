@@ -35,12 +35,7 @@ def open_file():
     if file_path:
         file_label.config(text=f"Selected file: {file_path}")
 
-def update_plot():
-    spectrum = [(0-slider.get()) for slider in sliders]
-    ax.clear()
-    ax.bar(range(1, 21), spectrum, color='blue')
-    ax.set_ylim(-12, 12)
-    canvas.draw()
+    
 
 
 def load_audio_to_ctypes(filepath):
@@ -139,6 +134,27 @@ canvas_widget = canvas.get_tk_widget()
 canvas_widget.pack()
 
 
+
+
+data_in = np.random.randint(
+    low=np.iinfo(np.int16).min,  # Minimum value for int16
+    high=np.iinfo(np.int16).max + 1,  # Maximum value for int16 (inclusive)
+    size=1024,  # Number of values
+    dtype=np.int16  # Ensure int16 type
+)
+
+data_in = (32000 * np.sin(np.linspace(0,10*np.pi,1024))).astype(np.int16)
+
+#data_in = np.zeros(1024).astype(np.int16)
+#data_in[259:1024] = 30000
+
+SliceArrayType = ctypes.c_int16 * len(data_in)
+slice_array = SliceArrayType(*data_in)
+lib.filterfunction(slice_array,1024)
+ax.clear()
+ax.plot(range(0, len(data_in)), data_in, color='blue')
+ax.plot(range(0, len(slice_array)), slice_array, color='red',linewidth=0.5)
+canvas.draw()
 # Start the background task in a separate thread
 thread = threading.Thread(target=audio_processing, daemon=True)
 thread.start()
